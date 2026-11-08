@@ -1,4 +1,4 @@
-name: Build APK
+name: Build Shantilata Kitchen APK
 
 on:
   workflow_dispatch:
@@ -12,17 +12,22 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Extract Android Project
+        run: |
+          mkdir android-project
+          unzip ShantilataKitchen_Android_Project_v2.zip -d android-project
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
 
-      - uses: gradle/actions/setup-gradle@v4
-
-      - name: Build APK
-        run: gradle assembleDebug
+      - uses: gradle/gradle-build-action@v3
+        with:
+          gradle-version: '8.9'
+          arguments: -p android-project assembleDebug
 
       - uses: actions/upload-artifact@v4
         with:
           name: Shantilata-Kitchen-APK
-          path: '**/build/outputs/apk/debug/*.apk'
+          path: android-project/app/build/outputs/apk/debug/app-debug.apk
